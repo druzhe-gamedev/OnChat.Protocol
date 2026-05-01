@@ -13,11 +13,11 @@ public class BinaryProtocol
     public readonly FrozenDictionary<PacketId, Type> Packets;
     private readonly FrozenDictionary<Type, ICodec> _codecs;
 
-    public BinaryProtocol()
+    public BinaryProtocol(params Assembly[] packetsAssemblies)
     {
         Handlers = GetHandlers();
         _codecs = GetCodecs();
-        Packets = GetPackets();
+        Packets = GetPackets(packetsAssemblies);
     }
 
     public ICodec GetCodec(Type type)
@@ -57,8 +57,8 @@ public class BinaryProtocol
                 .ToDictionary(codec => codec.HandledType)
                 .ToFrozenDictionary();
 
-    private static FrozenDictionary<PacketId, Type> GetPackets() =>
-        Assembly.GetAssembly(typeof(PacketId))!.GetTypes()
+    private static FrozenDictionary<PacketId, Type> GetPackets(params Assembly[] packetAssemblies) =>
+        packetAssemblies.SelectMany(assembly => assembly.GetTypes())
                 .Where(type => type.IsConcrete && type.GetCustomAttribute<PacketIdAttribute>() != null)
                 .ToDictionary(type => type.GetCustomAttribute<PacketIdAttribute>()!.PacketId)
                 .ToFrozenDictionary();
