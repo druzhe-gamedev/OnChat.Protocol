@@ -12,7 +12,7 @@ public class ProtocolBuffer(MemoryStream stream) : IDisposable
     public async Task WrapPacket(BinaryWriter writer)
     {
         writer.Write(PacketConstants.Signature);
-        writer.Write(stream.Length);
+        writer.Write((int)stream.Length);
 
         Stream.Seek(0, SeekOrigin.Begin);
         await stream.CopyToAsync(writer.BaseStream);
@@ -25,8 +25,7 @@ public class ProtocolBuffer(MemoryStream stream) : IDisposable
         if (first != PacketConstants.Signature[0] || second != PacketConstants.Signature[1])
             throw new BadPacketHeaderSignatureException("Bad packet header signature");
 
-        // length + packet type (byte)
-        int length = reader.ReadInt32() + 1;
+        int length = reader.ReadInt32();
         byte[] payload = new byte[length];
         await reader.BaseStream.ReadExactlyAsync(payload, 0, length);
         
