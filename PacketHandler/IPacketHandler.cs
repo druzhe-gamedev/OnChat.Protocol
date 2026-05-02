@@ -1,7 +1,9 @@
-﻿namespace OnChat.Protocol.PacketHandler;
+﻿using OnChat.Protocol.Packets;
+
+namespace OnChat.Protocol.PacketHandler;
 
 public interface IPacketHandler
 {
     PacketId PacketId { get; }
-    void Handle(object packet);
+    Task Handle(IPacket packet);
 }

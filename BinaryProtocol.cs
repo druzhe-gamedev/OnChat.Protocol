@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OnChat.Protocol.Codecs;
 using OnChat.Protocol.Codecs.Impl;
 using OnChat.Protocol.PacketHandler;
+using OnChat.Protocol.Packets;
 using OnChat.Protocol.Types;
 
 namespace OnChat.Protocol;
@@ -61,7 +62,10 @@ public class BinaryProtocol
 
     private static FrozenDictionary<PacketId, Type> GetPackets(params Assembly[] packetAssemblies) =>
         packetAssemblies.SelectMany(assembly => assembly.GetTypes())
-                .Where(type => type.IsConcrete && type.GetCustomAttribute<PacketIdAttribute>() != null)
-                .ToDictionary(type => type.GetCustomAttribute<PacketIdAttribute>()!.PacketId)
-                .ToFrozenDictionary();
+                        .Where(type =>
+                            type.IsConcrete && type.GetInterface(nameof(IPacket)) != null &&
+                            type.GetCustomAttribute<PacketIdAttribute>() != null
+                        )
+                        .ToDictionary(type => type.GetCustomAttribute<PacketIdAttribute>()!.PacketId)
+                        .ToFrozenDictionary();
 }
