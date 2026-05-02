@@ -8,6 +8,15 @@ public class ProtocolBuffer(MemoryStream stream) : IDisposable
     public BinaryWriter Writer { get; } = new(stream);
     public MemoryStream Stream => stream;
     private bool _disposed;
+
+    public async Task WrapPacket(BinaryWriter writer)
+    {
+        writer.Write(PacketConstants.Signature);
+        writer.Write(stream.Length);
+
+        Stream.Seek(0, SeekOrigin.Begin);
+        await stream.CopyToAsync(writer.BaseStream);
+    }
     
     public static async Task<ProtocolBuffer> CreateFromReader(BinaryReader reader)
     {
