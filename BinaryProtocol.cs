@@ -1,5 +1,6 @@
 ﻿using System.Collections.Frozen;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using OnChat.Protocol.Codecs;
 using OnChat.Protocol.Codecs.Impl;
 using OnChat.Protocol.PacketHandler;
@@ -12,9 +13,11 @@ public class BinaryProtocol
     public readonly FrozenDictionary<PacketId, IPacketHandler> Handlers;
     public readonly FrozenDictionary<PacketId, Type> Packets;
     private readonly FrozenDictionary<Type, ICodec> _codecs;
+    private readonly IServiceProvider _serviceProvider;
 
-    public BinaryProtocol(params Assembly[] packetsAssemblies)
+    public BinaryProtocol(IServiceProvider serviceProvider, params Assembly[] packetsAssemblies)
     {
+        _serviceProvider = serviceProvider;
         Handlers = GetHandlers();
         _codecs = GetCodecs();
         Packets = GetPackets(packetsAssemblies);
@@ -35,11 +38,10 @@ public class BinaryProtocol
         return codec;
     }
 
-    private static FrozenDictionary<PacketId, IPacketHandler> GetHandlers() =>
-        // todo check
+    private FrozenDictionary<PacketId, IPacketHandler> GetHandlers() =>
         Assembly.GetEntryAssembly()!.DefinedTypes
                 .Where(type => type.IsConcrete && type.GetInterface(nameof(IPacketHandler)) != null)
-                .Select(type => (IPacketHandler)Activator.CreateInstance(type)!)
+                .Select(type => (IPacketHandler)ActivatorUtilities.CreateInstance(_serviceProvider, type))
                 .ToDictionary(type => type.PacketId)
                 .ToFrozenDictionary();
 
