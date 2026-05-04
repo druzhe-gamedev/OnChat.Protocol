@@ -11,7 +11,7 @@ namespace OnChat.Protocol;
 
 public class BinaryProtocol
 {
-    public readonly FrozenDictionary<PacketId, IPacketHandler> Handlers;
+    public readonly FrozenDictionary<Type, IPacketHandler> Handlers;
     public readonly FrozenDictionary<PacketId, Type> Packets;
     private readonly FrozenDictionary<Type, ICodec> _codecs;
     private readonly IServiceProvider _serviceProvider;
@@ -39,11 +39,15 @@ public class BinaryProtocol
         return codec;
     }
 
-    private FrozenDictionary<PacketId, IPacketHandler> GetHandlers() =>
+    private FrozenDictionary<Type, IPacketHandler> GetHandlers() =>
         Assembly.GetEntryAssembly()!.DefinedTypes
-                .Where(type => type.IsConcrete && type.GetInterface(nameof(IPacketHandler)) != null)
+                .Where(type =>
+                    type.IsConcrete && type.GetInterface(nameof(IPacketHandler)) != null
+                )
                 .Select(type => (IPacketHandler)ActivatorUtilities.CreateInstance(_serviceProvider, type))
-                .ToDictionary(type => type.PacketId)
+                .ToDictionary(type => type.GetType().BaseType!.GenericTypeArguments
+                                          .First(a => a.IsAssignableTo(typeof(IPacket)))
+                )
                 .ToFrozenDictionary();
 
     private FrozenDictionary<Type, ICodec> GetCodecs() =>
