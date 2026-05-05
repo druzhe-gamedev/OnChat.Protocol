@@ -1,6 +1,6 @@
 ﻿namespace OnChat.Protocol.Packets;
 
-public interface IResponse
+public interface IResponse : IPacket
 {
     bool IsSuccessful { get; }
     string Description { get; }
