@@ -6,13 +6,12 @@ public class GuidCodec : CodecInfo<Guid>
     {
         byte[] guidBytes = value.ToByteArray();
         
-        writer.Write(16);
         writer.Write(guidBytes);
     }
 
     public override Guid Decode(BinaryReader reader)
     {
-        Guid guid = Guid.Parse(reader.ReadBytes(16));
-        return guid;
+        byte[] bytes = reader.ReadBytes(16);
+        return new (bytes);
     }
 }
