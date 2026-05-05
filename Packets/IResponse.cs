@@ -3,7 +3,7 @@
 public interface IResponse : IPacket
 {
     bool IsSuccessful { get; }
-    string Description { get; }
+    string Description { get; set; }
 }
 
 public interface ISuccessfulResponse : IResponse
