@@ -2,5 +2,5 @@
 
 public interface IPacket
 {
-    Guid CorrelationId { get; }
+    Guid CorrelationId { get; set; }
 }
