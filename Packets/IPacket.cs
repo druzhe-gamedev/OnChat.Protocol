@@ -1,3 +1,6 @@
 ﻿namespace OnChat.Protocol.Packets;
 
-public interface IPacket;
+public interface IPacket
+{
+    Guid CorrelationId { get; }
+}
