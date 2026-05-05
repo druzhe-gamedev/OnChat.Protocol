@@ -31,7 +31,9 @@ public class BinaryProtocol
         {
             // todo into factory
             PropertyInfo[] properties = type.GetProperties();
-            StructCodec structCodec = new(type, properties);
+            ConstructorInfo? ctor = type.GetConstructors()
+                                       .FirstOrDefault(ctor => ctor.GetParameters().Length > 0);
+            StructCodec structCodec = new(type, properties, ctor);
             structCodec.Init(this);
             return structCodec;
         }

@@ -3,7 +3,7 @@
 namespace OnChat.Protocol.Codecs.Impl;
 
 [FactoryCodec]
-public class StructCodec(Type structType, PropertyInfo[] properties) : CodecInfo<object>
+public class StructCodec(Type structType, PropertyInfo[] properties, ConstructorInfo? ctor) : CodecInfo<object>
 {
     public override void Encode(BinaryWriter writer, object value)
     {
@@ -17,15 +17,14 @@ public class StructCodec(Type structType, PropertyInfo[] properties) : CodecInfo
 
     public override object Decode(BinaryReader reader)
     {
-        object instance = Activator.CreateInstance(structType)!;
+        List<object> args = [];
+        args.AddRange(
+            ctor != null
+                ? ctor.GetParameters().Select(parameter => Protocol.GetCodec(parameter.ParameterType).Decode(reader))
+                : properties.Select(property => Protocol.GetCodec(property.PropertyType).Decode(reader))
+        );
 
-        foreach (PropertyInfo property in properties)
-        {
-            object propertyValue = Protocol.GetCodec(property.PropertyType).Decode(reader);
-            
-            property.SetValue(instance, propertyValue);
-        }
-
+        object instance = Activator.CreateInstance(structType, args)!;
         return instance;
     }
 }
