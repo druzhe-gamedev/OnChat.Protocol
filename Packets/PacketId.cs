@@ -1,4 +1,4 @@
-﻿namespace OnChat.Protocol;
+﻿namespace OnChat.Protocol.Packets;
 
 public enum PacketId : byte
 {
@@ -9,6 +9,5 @@ public enum PacketId : byte
     RegistrationSuccess,
     RegistrationFailure,
     AuthenticationSuccessfulPacket,
-    WrongLoginPacket,
-    WrongPasswordPacket
+    WrongAuthDataPacket
 }
