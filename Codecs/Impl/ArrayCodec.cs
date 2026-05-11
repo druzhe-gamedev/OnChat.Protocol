@@ -1,5 +1,6 @@
 ﻿namespace OnChat.Protocol.Codecs.Impl;
 
+[FactoryCodec]
 public class ArrayCodec<T>(CodecInfo<T> elementCodec) : CodecInfo<T[]>
 {
     public override void Encode(BinaryWriter writer, T[] value)
