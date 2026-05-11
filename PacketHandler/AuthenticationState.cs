@@ -4,4 +4,4 @@ public record AuthenticationState;
 
 public record NotAuthenticated : AuthenticationState;
 
-public record Authenticated(string UserId, string Username, IConnection Connection) : AuthenticationState;
+public record Authenticated(Guid UserId, string Username, IConnection Connection) : AuthenticationState;
