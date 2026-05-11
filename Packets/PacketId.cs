@@ -10,5 +10,7 @@ public enum PacketId : byte
     RegistrationFailure,
     AuthenticationSuccessfulPacket,
     WrongLoginPacket,
-    WrongPasswordPacket
+    WrongPasswordPacket,
+    TokensRotationPacket,
+    BadRefreshTokenPacket
 }
