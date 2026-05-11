@@ -13,5 +13,6 @@ public enum PacketId : byte
     WrongPasswordPacket,
     TokensRotationPacket,
     BadRefreshTokenPacket,
-    UnauthorizedPacket
+    UnauthorizedPacket,
+    ReceiveMessagePacket
 }
