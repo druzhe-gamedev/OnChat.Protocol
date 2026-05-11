@@ -30,6 +30,18 @@ public class BinaryProtocol
         if (!_codecs.TryGetValue(type, out ICodec? codec))
         {
             // todo into factory
+            if (type.IsSZArray)
+            {
+                Type elementType = type.GetElementType()!;
+                ICodec elementCodec = GetCodec(elementType);
+
+                ICodec arrayCodec = (ICodec)Activator.CreateInstance(
+                    typeof(ArrayCodec<>).MakeGenericType(elementType),
+                    elementCodec
+                )!;
+                return arrayCodec;
+            }
+            
             PropertyInfo[] properties = type.GetProperties();
             ConstructorInfo? ctor = type.GetConstructors()
                                        .FirstOrDefault(ctor => ctor.GetParameters().Length > 0);
