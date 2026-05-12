@@ -16,5 +16,7 @@ public enum PacketId : byte
     UnauthorizedPacket,
     ReceiveMessagePacket,
     WrongIdPacket,
-    PublicKeyPacket
+    PublicKeyPacket,
+    GetUsersModelsPacket,
+    ReceiveUsersModelsPacket
 }
