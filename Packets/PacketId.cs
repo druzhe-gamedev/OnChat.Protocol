@@ -2,6 +2,7 @@
 
 public enum PacketId : byte
 {
+    SuccessfulPacket,
     AuthenticationPacket,
     RegistrationPacket,
     SendMessagePacket,
