@@ -1,14 +1,14 @@
 ﻿namespace OnChat.Protocol.Codecs.Impl;
 
 [FactoryCodec]
-public class ArrayCodec<T>(CodecInfo<T> elementCodec) : CodecInfo<T[]>
+public class ArrayCodec<T>(ICodec elementCodec) : CodecInfo<T[]>
 {
     public override void Encode(BinaryWriter writer, T[] value)
     {
         writer.Write(value.Length);
 
         foreach (T element in value)
-            elementCodec.Encode(writer, element);
+            elementCodec.Encode(writer, element!);
         
     }
 
@@ -18,7 +18,7 @@ public class ArrayCodec<T>(CodecInfo<T> elementCodec) : CodecInfo<T[]>
         T[] array = new T[length];
 
         for (int i = 0; i < length; i++)
-            array[i] = elementCodec.Decode(reader);
+            array[i] = (T)elementCodec.Decode(reader);
 
         return array;
     }
