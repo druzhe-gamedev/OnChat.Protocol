@@ -13,6 +13,7 @@ public enum PacketId : byte
     WrongLoginPacket,
     WrongPasswordPacket,
     WrongMailPacket,
+    WrongAgePacket,
     TokensRotationPacket,
     BadRefreshTokenPacket,
     UnauthorizedPacket,
