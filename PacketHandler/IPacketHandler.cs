@@ -4,5 +4,5 @@ namespace OnChat.Protocol.PacketHandler;
 
 public interface IPacketHandler
 {
-    Task Handle(IPacket packet, IConnection caller);
+    Task<IResponse> Handle(IPacket packet, IConnection caller);
 }
