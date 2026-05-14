@@ -21,5 +21,6 @@ public enum PacketId : byte
     WrongIdPacket,
     PublicKeyPacket,
     GetUsersModelsPacket,
-    ReceiveUsersModelsPacket
+    ReceiveUsersModelsPacket,
+    ValidationFailurePacket
 }
