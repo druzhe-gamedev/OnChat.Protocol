@@ -9,21 +9,19 @@ using OnChat.Protocol.Types;
 
 namespace OnChat.Protocol;
 
-public class BinaryProtocol
+public class BinaryProtocol(IServiceProvider serviceProvider, params Assembly[] packetsAssemblies)
 {
-    public readonly FrozenDictionary<Type, IPacketHandler> Handlers;
-    public readonly FrozenDictionary<PacketId, Type> Packets;
-    private readonly FrozenDictionary<Type, ICodec> _codecs;
-    private readonly IServiceProvider _serviceProvider;
+    public FrozenDictionary<Type, IPacketHandler> Handlers { get; private set; }
+    public FrozenDictionary<PacketId, Type> Packets { get; private set; }
+    private FrozenDictionary<Type, ICodec> _codecs;
 
-    public BinaryProtocol(IServiceProvider serviceProvider, params Assembly[] packetsAssemblies)
+    public void Setup()
     {
-        _serviceProvider = serviceProvider;
         Handlers = GetHandlers();
         _codecs = GetCodecs();
-        Packets = GetPackets(packetsAssemblies);
+        Packets = GetPackets();
     }
-
+    
     public ICodec GetCodec(Type type)
     {
         // ReSharper disable once InvertIf
@@ -58,7 +56,7 @@ public class BinaryProtocol
                 .Where(type =>
                     type.IsConcrete && type.GetInterface(nameof(IPacketHandler)) != null
                 )
-                .Select(type => (IPacketHandler)ActivatorUtilities.CreateInstance(_serviceProvider, type))
+                .Select(type => (IPacketHandler)ActivatorUtilities.CreateInstance(serviceProvider, type))
                 .ToDictionary(type => type.GetType().BaseType!.GenericTypeArguments
                                           .First(a => a.IsAssignableTo(typeof(IPacket)))
                 )
@@ -78,8 +76,8 @@ public class BinaryProtocol
                 .ToDictionary(codec => codec.HandledType)
                 .ToFrozenDictionary();
 
-    private static FrozenDictionary<PacketId, Type> GetPackets(params Assembly[] packetAssemblies) =>
-        packetAssemblies.SelectMany(assembly => assembly.GetTypes())
+    private FrozenDictionary<PacketId, Type> GetPackets() =>
+        packetsAssemblies.SelectMany(assembly => assembly.GetTypes())
                         .Where(type =>
                             type.IsConcrete && type.GetInterface(nameof(IPacket)) != null &&
                             type.GetCustomAttribute<PacketIdAttribute>() != null
