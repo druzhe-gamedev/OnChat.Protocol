@@ -7,6 +7,7 @@ public enum PacketId : byte
     RegistrationPacket,
     SendMessagePacket,
     LoadMessagesPacket,
+    MessagesPacket,
     TokensPacket,
     RegistrationSuccess,
     RegistrationFailure,
