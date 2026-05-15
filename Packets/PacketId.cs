@@ -6,6 +6,7 @@ public enum PacketId : byte
     AuthenticationPacket,
     RegistrationPacket,
     SendMessagePacket,
+    LoadMessagesPacket,
     TokensPacket,
     RegistrationSuccess,
     RegistrationFailure,
@@ -22,5 +23,6 @@ public enum PacketId : byte
     PublicKeyPacket,
     GetUsersModelsPacket,
     ReceiveUsersModelsPacket,
-    ValidationFailurePacket
+    ValidationFailurePacket,
+    WrongLimitsPacket
 }
